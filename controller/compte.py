@@ -10,11 +10,12 @@ De cette manière toutes les urls associées a ce controller commenceront par /c
 '''
 
 
-@compte.route("/", method=['GET', 'POST'])
+@compte.route("/", methods=['GET', 'POST'])
 def index():
-    return render_template("compte/index.html")
+  prenoms = ["michel", "benoit", "andre"]
+  return render_template("compte/index.html", prenoms=prenoms)
 
 
 @compte.route("/hello")
-def index():
+def hello():
     return "Hello"

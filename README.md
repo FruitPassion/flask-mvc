@@ -138,22 +138,21 @@ Ce dossier contient tous les fichiers python qui ne rentre pas dans les autres d
 ### Model :
 
 Les fichiers models sont nommés d'après la table sur laquelle ils se basent.
-Quand on se rend sur le fichier `model/personnel.py` par exemple, on peut y voir la fonction `getAllPersonnel()` que
+Quand on se rend sur le fichier `model/personnel.py` par exemple, on peut y voir la fonction `getAllCompte()` que
 l'on a utilisé précedemment dans notre controller.
 
 ```python
-def getAllPersonnel():
-    personnel = Personnel.query.with_entities(Personnel.Id_Personnel, Personnel.Nom, Personnel.Prenom,
-                                              Personnel.Role).all()
-    return convertToDict(personnel)
+def getAllCompte():
+    compte = Compte.query.with_entities(Compte.Id_Compte, Compte.nom, Compte.date_creation, Compte.actif).all()
+    return convertToDict(compte)
 ```
 
 La premiere ligne est la définition du nom de la fonction ainsi que les paramètres entre les parenthèses (il n'y en a
 pas). La seconde ligne est la query qui pourrait se traduire comme suit en SQL:
 
 ```sql
-SELECT Id_Personnel, Nom, Prenom, Role
-FROM Personnel;
+SELECT Id_Compte, nom, date_creation, actif
+FROM Compte;
 ```
 
 On indique d'abord la classe python depuis laquelle on veut baser la selection (voir [Model-DB](#model-db-)), ensuite
@@ -161,8 +160,7 @@ on appel la méthode `.query` pour dire que c'est un SELECT. Ensuite, on précis
 la méthode `.with_entities` (ne pas en mettre revient à faire un `SELECT *`).<br>
 A la toute fin, on utilise la méthode `.all()` pour dire que l'on souhaite récupérer l'ensemble des résultats. Si on
 veut le premier résultat, on aurait par exemple utilisé `.first()`, ou encore pour avoir le nombre de résultats, on
-aurait
-utilisé `.count()`
+aurait  utilisé `.count()`
 
 > [!NOTE]  
 > Pour plus d'infos, n'hésitez à consulter
@@ -170,7 +168,7 @@ utilisé `.count()`
 > ou cet article
 > de [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-use-flask-sqlalchemy-to-interact-with-databases-in-a-flask-application)
 
-On stocke le résultat de la query dans une variable `personnel`. Cette variable contient maintenant une liste de classe.
+On stocke le résultat de la query dans une variable `compte`. Cette variable contient maintenant une liste de classe.
 On la retourne donc en utilisant la fonction `convertToDict()` qui permet de convertir une liste de classe en une liste
 de dictionnaire (c'est plus simple à utiliser par la suite).
 
@@ -185,9 +183,35 @@ Cela permet l'utilisation de la librairie SQLAlchemy et ainsi la création des f
 [model](#model-).
 
 Le fichier `model_db/compte.py` reprend les différents noms de colonnes, mais précise aussi les types,
-les indexs, si la valeur peux être nulle, la clée primaire, etc.
+les indexes, si la valeur peux être nulle, la clée primaire, etc.
 
-- A faire : Rajouter la translation en Classe
+```python
+class Compte(db.Model):
+    __tablename__ = 'Compte'
+    __table_args__ = {'schema': 'db_base_flask'}
+
+    Id_Compte = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nom = db.Column(db.String(50), nullable=False)
+    date_creation = db.Column(db.DateTime, nullable=False)
+    hash = db.Column(db.Text, nullable=False)
+    essaie_connexion = db.Column(db.String(50), nullable=False)
+    actif = db.Column(db.Boolean, nullable=False)
+```
+
+Dans l'autre fichier `model_db/photo.py` on a la table photo qui possede une clée étrangère associée à la table compte.
+
+```python
+class Photo(db.Model):
+    __tablename__ = 'Photo'
+    __table_args__ = {'schema': 'db_base_flask'}
+
+    Id_Photo = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    libelle = db.Column(db.String(50))
+    chemin = db.Column(db.String(100), nullable=False)
+    Id_Compte = db.Column(db.ForeignKey(f'db_fiches_dev.Compte.Id_Compte'), primary_key=True)
+
+    Compte = db.relationship('Compte', primaryjoin='Photo.Id_Compte == Compte.Id_Compte', backref='photos')
+```
 
 > [!IMPORTANT]   
 > La derniere ligne permet de faire la jointure interne de manière automatique si aucune autre jointure n'est précisée.

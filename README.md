@@ -112,7 +112,7 @@ On a aussi dans le fichier `auth.py` une autre route nommée `/`. Celle-ci se r�
 @auth.route('/')
 def index():
     personnel = getAllPersonnel()
-    return render_template('auth/index.html', personnel=personnel)
+    return render_template('compte/index.html', personnel=personnel)
 ```
 
 La fonction `index()` appelle ici la fonction `getAllPersonnel()` et stocke son contenu dans la variable `personnel`.
@@ -211,9 +211,9 @@ Ce dossier en contient trois autres :
 
 On pourrait par exemple rajouter le dossier 'audio' pour stocker tous les fichiers audio.
 
-### Static :
-
 ### View :
+
+- A faire
 
 ### app.py :
 
@@ -225,6 +225,10 @@ la configuration à utiliser.
 Fichier utilisé pour créer différentes parametrer différentes configurtions pour l'application.
 
 ***
+
+<div align="center">
+<img src="https://imgur.com/xKbI3nf.png">
+</div>
 
 ***
 
@@ -313,15 +317,22 @@ ou `http://127.0.0.1:5000/`
 
 ***
 
+<div align="center">
+<img src="https://imgur.com/0wG0ZGL.png">
+</div>
+
 ***
 
 ## Outils utiles
 
-### Generationd des classes de la base de donnée
+### Generation des classes de la base de donnée
 
+- A faire : flask-sqlcodegen
 
-### 
+### TODO Flag 
 
+- A faire : Explication
+- A faire : Plugin VSCode
 
 
 

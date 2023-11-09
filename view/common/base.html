@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Accueil{% endblock %} - Nom du site</title>
+    <link {% block favicon %}rel="icon"
+          href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Location_dot_black.svg/2048px-Location_dot_black.svg.png"
+          {% endblock %}>
+
+    <!-- Exemple pour link une police google
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    -->
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/base.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Balise utilisée link les feuilles css -->
+    {% block stylesheets %}{% endblock %}
+
+    <!-- Balise utilisée link les scripts js -->
+    {% block javascripts %}{% endblock %}
+
+    <!-- Balise utilisée d'eventuelle modifications supplémentaires dans le head -->
+    {% block headSuppl %}{% endblock %}
+</head>
+
+<body>
+<!-- Inclusion de la barre de navigation -->
+{% include "partials/nav.html" %}
+
+<!-- Balise utilisée pour la fonction flash (affichage d'un message lors du chargement de la page -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div style="{% if category == 'message' %}background-color: #6ce56c;{% else %}
+                background-color: #e83c55;
+            {% endif %} color: black">
+                <ul class="flashes" style="margin-top: revert">
+                    <li>{{ message }}</li>
+                </ul>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- Balise princcipale -->
+<div id="master">
+    {% block body %}{% endblock %}
+</div>
+
+<!-- Inclusion du footer -->
+{% include "partials/footer.html" %}
+</body>
+
+{% block javascripts2 %}{% endblock %}
+
+</html>

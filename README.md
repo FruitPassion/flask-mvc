@@ -16,7 +16,7 @@
 
 ## Sommaire
 
-* [Architecture](#architecutre)
+* [Architecture](#architecture)
 * [Structure du projet](#structure-du-projet)
     * [Controller](#controller-)
     * [Custom Paquets](#custom-paquets-)
@@ -27,9 +27,9 @@
     * [app.py](#apppy-)
     * [config.py](#configpy-)
 * [Prérequis](#prérequis)
+    * [BDD Locale](#bdd-locale-img-srchttpspicclubiccomv1images1501317raw-height21)
     * [Installation de python 3.10](#installation-de-python-310-img-srchttpsuploadwikimediaorgwikipediacommonsthumb11fpythonlogo01svg1200px-pythonlogo01svgpng-height20)
     * [Environnement virtuel](#création-de-lenvrionnement-virtuel-img-srchttpsimgurcomxbg59oapng-height20)
-    * [BDD Locale](#bdd-locale-img-srchttpspicclubiccomv1images1501317raw-height21)
 * [Outils utiles](#outils-utiles)
     * [Generation bdd](#generation-des-classes-de-la-base-de-donnée)
     * [TODO](#todo-flag)
@@ -42,7 +42,7 @@
 
 ***
 
-## Architecutre
+## Architecture
 
 Le projet suit le modèle de conception MVC. Ce concept de MVC (Model-View-Controller) dans une application web, comme
 Flask, est une manière de structurer et d'organiser le code pour améliorer la clarté et la maintenabilité de
@@ -232,12 +232,12 @@ On pourrait par exemple rajouter le dossier 'audio' pour stocker tous les fichie
 
 ### app.py :
 
-Fichier à executer pour lancer l'application. Permet d'importer les différents controller ainsi que de préciser
+Fichier à exécuter pour lancer l'application. Permet d'importer les différents controller ainsi que de préciser
 la configuration à utiliser.
 
 ### config.py :
 
-Fichier utilisé pour créer différentes parametrer différentes configurtions pour l'application.
+Fichier utilisé pour créer différentes paramètres différentes configurations pour l'application.
 
 ***
 

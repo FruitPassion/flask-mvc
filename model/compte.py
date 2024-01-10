@@ -1,6 +1,5 @@
 from custom_paquets.converter import convertToDict
-from model_db.shared_model import db
-from model_db.compte import Compte
+from model.shared_model import db, Compte
 
 def getAllPersonnel():
     """

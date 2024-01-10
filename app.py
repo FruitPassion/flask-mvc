@@ -3,7 +3,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, url_for
 
 from controller.compte import compte
-from model_db.shared_model import db
+from model.shared_model import db
 
 
 app = Flask(__name__, template_folder="view")

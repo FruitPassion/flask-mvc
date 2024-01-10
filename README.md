@@ -21,7 +21,7 @@
     * [Controller](#controller-)
     * [Custom Paquets](#custom-paquets-)
     * [Model](#model-)
-    * [Model-DB](#model-db-)
+      * [Shared-Model](#shared-model)
     * [Static](#static-)
     * [View](#view-)
     * [app.py](#apppy-)
@@ -172,9 +172,9 @@ On stocke le résultat de la query dans une variable `compte`. Cette variable co
 On la retourne donc en utilisant la fonction `convertToDict()` qui permet de convertir une liste de classe en une liste
 de dictionnaire (c'est plus simple à utiliser par la suite).
 
-### Model-DB :
+### Shared-Model
 
-Pour cet exemple on utiliseras cette structure de données :
+Pour cet exemple, on utilisera cette structure de données :
 
 ![mcdi](https://imgur.com/w8vm5az.png)
 
@@ -182,8 +182,8 @@ Ce dossier contient toutes les structures des tables de la base de donnée trans
 Cela permet l'utilisation de la librairie SQLAlchemy et ainsi la création des fonctions de
 [model](#model-).
 
-Le fichier `model_db/compte.py` reprend les différents noms de colonnes, mais précise aussi les types,
-les indexes, si la valeur peux être nulle, la clée primaire, etc.
+Le fichier `model/shared_model.py` reprend les différents noms de colonnes, mais précise aussi les types,
+les indexs, si la valeur peux être nulle, la clée primaire, etc.
 
 ```python
 class Compte(db.Model):
@@ -198,7 +198,7 @@ class Compte(db.Model):
     actif = db.Column(db.Boolean, nullable=False)
 ```
 
-Dans l'autre fichier `model_db/photo.py` on a la table photo qui possede une clée étrangère associée à la table compte.
+Dans l'autre fichier `model/shared_model.py` on a la table photo qui possede une clée étrangère associée à la table compte.
 
 ```python
 class Photo(db.Model):
@@ -251,13 +251,13 @@ Fichier utilisé pour créer différentes paramètres différentes configuration
 
 ### BDD locale <img src="https://pic.clubic.com/v1/images/1501317/raw" height="21">
 
-Si vous ne possedez pas de serveur sur lequel vous conn XAMPP est nécessaire, mais uniquement pour faire tourner la base
-de donnée. Ainsi, il suffit seulement
-de lancer MySql.
+Pour faire tourner le projet, il est necessaire d'avoir une base de donnée locale. Pour cela, on utilisera MariadDB.
+Vous pouvez aussi utiliser XAMPP, mais uniquement pour faire tourner la base de donnée.
+Ainsi, il suffit seulement de lancer MySql depuis l'interface
 
 Une fois mysql démaré, on cherchera à executer en tant que root le script `db_creation.sql` en se basant sur
-[ces méthodes](https://dev.mysql.com/doc/refman/8.0/en/mysql-batch-commands.html). Ledit script permet ainsi de créer
-l'utilisateur nécessaire à la connexion, mais aussi de créer le schéma de la base de donnée.
+[ces méthodes](https://dev.mysql.com/doc/refman/8.0/en/mysql-batch-commands.html). Ledit script permet ainsi de créer l'utilisateur nécessaire à la connexion, mais aussi de créer le
+schéma de la base de donnée.
 
 ### Installation de Python 3.10 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Python_logo_01.svg/1200px-Python_logo_01.svg.png" height="20">
 

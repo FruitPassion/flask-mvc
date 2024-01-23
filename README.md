@@ -1,9 +1,9 @@
 <br><br>
 <div align="center">
-  <h1>Flask au format MVC</h1>
+  <h1>Flask MVC</h1>
   <p>
-    Documentation de développement et d'utilisation de l'application du framework.
-    <br />
+    Documentation de développement et d'utilisation basique du framework Flask au format MVC.
+    <br/>
   </p>
 </div>
 
@@ -16,23 +16,26 @@
 
 ## Sommaire
 
-* [Architecture](#architecture)
-* [Structure du projet](#structure-du-projet)
-    * [Controller](#controller-)
-    * [Custom Paquets](#custom-paquets-)
-    * [Model](#model-)
-      * [Shared-Model](#shared-model)
-    * [Static](#static-)
-    * [View](#view-)
-    * [app.py](#apppy-)
-    * [config.py](#configpy-)
-* [Prérequis](#prérequis)
-    * [BDD Locale](#bdd-locale-img-srchttpspicclubiccomv1images1501317raw-height21)
-    * [Installation de python 3.10](#installation-de-python-310-img-srchttpsuploadwikimediaorgwikipediacommonsthumb11fpythonlogo01svg1200px-pythonlogo01svgpng-height20)
-    * [Environnement virtuel](#création-de-lenvrionnement-virtuel-img-srchttpsimgurcomxbg59oapng-height20)
-* [Outils utiles](#outils-utiles)
-    * [Generation bdd](#generation-des-classes-de-la-base-de-donnée)
-    * [TODO](#todo-flag)
+- [Sommaire](#sommaire)
+- [Architecture](#architecture)
+- [Structure du projet](#structure-du-projet)
+  - [Controller :](#controller-)
+  - [Custom-Paquets :](#custom-paquets-)
+  - [shared\_model.py :](#shared_modelpy-)
+  - [Model :](#model-)
+  - [Static :](#static-)
+  - [View :](#view-)
+  - [app.py :](#apppy-)
+  - [config.py :](#configpy-)
+- [Prérequis](#prérequis)
+  - [A faire : Déploiments simplifié docker pour développement](#a-faire--déploiments-simplifié-docker-pour-développement)
+  - [BDD locale ](#bdd-locale-)
+  - [Installation de Python 3.10 ](#installation-de-python-310-)
+  - [Création de l'envrionnement virtuel ](#création-de-lenvrionnement-virtuel-)
+  - [Installation des dépendances/librairies ](#installation-des-dépendanceslibrairies-)
+  - [Lancement du projet](#lancement-du-projet)
+- [Outils utiles](#outils-utiles)
+  - [Generation des classes de la base de donnée](#generation-des-classes-de-la-base-de-donnée)
 
 ***
 
@@ -94,96 +97,100 @@ Ainsi, à la racine du projet, on retrouve plusieurs fichiers et dossiers :
 Les controller comme dit précedement, permettent à partir d'une route donnée par l'utilisateur, d'effectuer des actions
 avec le model et d'afficher une vue.
 
-Dans le fichier `controller/compte.py` par exemple, on retrouve la route **hello** dans le navigateur. Cette route est
-associé  à la fonction `hello()`.
-Ainsi quand on tape `http://localhost:5000/hello` dans notre navigateur, Flask effectue la fonction qui suit  nommée
-`hello()`.
+Dans le fichier `/controller/compte.py` par exemple, on retrouve la route **/** dans le navigateur. Cette route est
+associé  à la fonction `index()`.
+On peux aussi voir que la route utilise des `methods`, ici *GET*. Si on utilise une form on pourrait utiliser `methods=['GET', 'POST']` pour indiquer que l'on souhaite traiter une form.
+
+Ainsi quand on tape `http://localhost:5000/` dans notre navigateur, Flask effectue la fonction qui suit  nommée
+`index()`.
 
 ```python
-@compte.route("/hello")
-def hello():
-    return "Hello"
-```
-
-Cette fonction retourne pour l'instant uniquement du texte. Quand on se rend sur la route en question dans le
-navigateur,
-on voit alors ceci :
-
-![return-hello](https://imgur.com/viWTeIA.png)
-
-On a aussi dans le fichier `controller/compte.py` une autre route nommée `/`. Celle-ci se réferre à un chemin tel que
-`http://localhost:5000/`. Elle est rattaché à la fonction `index()`.
-
-```python
-@compte.route("/", methods=['GET', 'POST'])
+@compte.route("/", methods=['GET'])
 def index():
-  prenoms = ["michel", "benoit", "andre"]
-  return render_template("compte/index.html", prenoms=prenoms)
+    return render_template("/view/compte/index.html")
 ```
 
-La fonction `index()` créer ici une liste de prenom et stocke son contenu dans la variable `prenoms`.
-<br>
-On retourne par la suite la fonction `render_template()` à laquelle on passe deux paramètres. Le premier est obligatoire
-et correspond au chemin du fichier HTML (la [vue](#view-)) que l'on veut afficher à l'utilisateur. Après le chemin de la
-vue, on peut passer autant de paramètre que l'on souhaite et qui correspondront aux variables que l'on stockera dans la
-session utilisateur. <br>
-Le résultat de ce chemin est le suivant :
+Cette fonction permet de faire un rendu du fichier `/view/compte/index.html` puis de l'envoyer à l'utilisateur. :
 
-![index](https://imgur.com/REHvCaG.png)
+![return-index](https://imgur.com/828SrDv.png)
+
+En regardant le fichier `/view/compte/index.html` dans les [View](#view) on peux voir que les trois boutons sont chacuns reliés à une route du controller `Compte`.
+
+Il y a la route `/comptes`, la route `/afficher`, la route `/hello` et la route `/connexion`.
+
+La route `/comptes` est tel que :
+
+```python
+@compte.route("/comptes")
+def comptes():
+    tout_les_comptes = get_all_comptes()
+    return render_template("compte/page_comptes.html", comptes=tout_les_comptes, nb_comptes=get_nombre_comptes())
+```
+
+On à la route, la fonction associée puis on appel la fonction `get_all_comptes()` issue du [Model](#model) et on stocke sa valeur dans la variable `tout_les_comptes`. On passe ensuite cette variable à la fonction `render_template()` à laquelle on passe aussi la fonction `get_nombre_comptes` sous le nom de nb_comptes.
+
+> [!NOTE]  
+> `render_template()` prend en arguments obligatoire le chemin d'un fichier html ainsi que le nombre d'arguments souhaités. Il est possible de passer des variables à la vue ainsi que des fonctions. Voir [View](#view).
+
+On à ensuite la route `/afficher`. Cette route est particulière car pour fonctionner elle nécessite un paramètres dans l'URL.
+
+```python
+@compte.route("/afficher/<valeur>", methods=['GET'])
+def afficher(valeur):
+    return valeur
+```
+
+Ainsi, si on tape dans la barre de recherche `http://localhost:5000/afficher/test` on pourras récuperer le paramètre valeur en tant que variable et l'utiliser à notre guise (ici on l'affiche simplement).
+
+La route `/hello` possède entre sa déclaration et sa fonction un décorateur *`@login_required`* déclaré dans le fichier `decorateurs.py` déclaré dans [custom-paquets](#custom-paquets). Ce décorateur donc est smplement une fonction appelé avant d'effectuer la fonction de la route.
+
+```python
+def decorated_function(*args, **kwargs):
+    if not session.get("name"):
+        return abort(403)
+    return func(*args, **kwargs)
+```
+
+Ici, si on ne trouve pas la valeur `name` en session, on retourne un code 403. Les erreurs sont gérée dans le fichier [app.py](#apppy)
+
+![403](https://imgur.com/k6dDdGd.png)
+
+Enfin, on à la route `/connexion` qui permet d'assigner à une valeur à `name` en session.
+
+```python
+@compte.route("/connexion")
+def connexion():
+    session["name"] = "Utilisateur 1"
+    return redirect(url_for("compte.index"))
+```
+
+On utilise la variable `session` qui est un dictionnaire et on lui assigner la valeur `"Utilisateur 1"`.
+Par la suite, on rediriger l'utilisateur vers la route `/`.
+
+> [!NOTE]  
+> `url_for()` prend en argument '*`controller`*.*`fonction de route`*'. Si on voulais rediriger vers la route `/comptes`, par exemple, on aurait fait `redirect(url_for('compte.comptes'))`.
+>
+> Pour la route `/afficher/<parametre>`, on aurait utilisé `redirect(url_for('compte.afficher', valeur='valeur parametre'))`. Voir aussi [view](#view) ou on utilise des redirections similaires.
 
 ### Custom-Paquets :
 
 Ce dossier contient tous les fichiers python qui ne rentre pas dans les autres dossiers.
 
-### Model :
+Par exemple, `/custom_paquets/decorateur.py` contient les décorateurs qui servent de *'filtres'* aux routes, c'est à dire qui effectuent des vérifications avant d'accorder l'accès à la fonction associé à une route. Par exemple *`@login_required`* permet de vérifier si la valeur `name` est bien présente en session.
 
-Les fichiers models sont nommés d'après la table sur laquelle ils se basent.
-Quand on se rend sur le fichier `model/personnel.py` par exemple, on peut y voir la fonction `getAllCompte()` que
-l'on a utilisé précedemment dans notre controller.
+### shared_model.py :
 
-```python
-def getAllCompte():
-    compte = Compte.query.with_entities(Compte.Id_Compte, Compte.nom, Compte.date_creation, Compte.actif).all()
-    return convertToDict(compte)
-```
-
-La premiere ligne est la définition du nom de la fonction ainsi que les paramètres entre les parenthèses (il n'y en a
-pas). La seconde ligne est la query qui pourrait se traduire comme suit en SQL:
-
-```sql
-SELECT Id_Compte, nom, date_creation, actif
-FROM Compte;
-```
-
-On indique d'abord la classe python depuis laquelle on veut baser la selection (voir [Model-DB](#model-db-)), ensuite
-on appel la méthode `.query` pour dire que c'est un SELECT. Ensuite, on précise les colonnes que l'on souhaite avec
-la méthode `.with_entities` (ne pas en mettre revient à faire un `SELECT *`).<br>
-A la toute fin, on utilise la méthode `.all()` pour dire que l'on souhaite récupérer l'ensemble des résultats. Si on
-veut le premier résultat, on aurait par exemple utilisé `.first()`, ou encore pour avoir le nombre de résultats, on
-aurait  utilisé `.count()`
-
-> [!NOTE]  
-> Pour plus d'infos, n'hésitez à consulter
-> la [documentation officielle](https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/)
-> ou cet article
-> de [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-use-flask-sqlalchemy-to-interact-with-databases-in-a-flask-application)
-
-On stocke le résultat de la query dans une variable `compte`. Cette variable contient maintenant une liste de classe.
-On la retourne donc en utilisant la fonction `convertToDict()` qui permet de convertir une liste de classe en une liste
-de dictionnaire (c'est plus simple à utiliser par la suite).
-
-### Shared-Model
-
-Pour cet exemple, on utilisera cette structure de données :
+Pour cet exemple, on utilisera cette structure de données simpliste :
 
 ![mcdi](https://imgur.com/w8vm5az.png)
 
-Ce dossier contient toutes les structures des tables de la base de donnée translatée en python.
-Cela permet l'utilisation de la librairie SQLAlchemy et ainsi la création des fonctions de
-[model](#model-).
+Ce fichier contient toutes les structures des tables de la base de donnée translatée en python.
+Cela permet l'utilisation de la librairie SQLAlchemy et ainsi la création des fonctions de [model](#model).
 
-Le fichier `model/shared_model.py` reprend les différents noms de colonnes, mais précise aussi les types,
+Le fichier `model/shared_model.py` reprend les différentes tables, noms de colonnes, mais précise aussi les types,
 les indexs, si la valeur peux être nulle, la clée primaire, etc.
+
+Ici la table Compte :
 
 ```python
 class Compte(db.Model):
@@ -198,7 +205,7 @@ class Compte(db.Model):
     actif = db.Column(db.Boolean, nullable=False)
 ```
 
-Dans l'autre fichier `model/shared_model.py` on a la table photo qui possede une clée étrangère associée à la table compte.
+Dans ce même fichier on retrouve la table photo qui possede une clée étrangère associée à la table compte.
 
 ```python
 class Photo(db.Model):
@@ -208,13 +215,62 @@ class Photo(db.Model):
     Id_Photo = db.Column(db.Integer, primary_key=True, autoincrement=True)
     libelle = db.Column(db.String(50))
     chemin = db.Column(db.String(100), nullable=False)
-    Id_Compte = db.Column(db.ForeignKey(f'db_fiches_dev.Compte.Id_Compte'), primary_key=True)
+    Id_Compte = db.Column(db.ForeignKey(f'db_base_flask.Compte.Id_Compte'), primary_key=True)
 
     Compte = db.relationship('Compte', primaryjoin='Photo.Id_Compte == Compte.Id_Compte', backref='photos')
 ```
 
 > [!IMPORTANT]   
 > La derniere ligne permet de faire la jointure interne de manière automatique si aucune autre jointure n'est précisée.
+
+
+### Model :
+
+Les fichiers models sont nommés d'après la table sur laquelle ils se basent.
+Quand on se rend sur le fichier `model/compte.py` par exemple, on peut y voir la fonction `get_all_comptes()` que
+l'on a utilisé précedemment dans notre controller.
+
+```python
+def get_all_comptes():
+    return Compte.query.with_entities(Compte.nom, Compte.date_creation).all()
+```
+
+La premiere ligne est la définition du nom de la fonction ainsi que les paramètres entre les parenthèses (il n'y en a
+pas ici). La seconde ligne est la query qui pourrait se traduire comme suit en SQL:
+
+```sql
+SELECT nom, date_creation
+FROM Compte;
+```
+
+On indique d'abord la classe python depuis laquelle on veut baser la selection (voir [shared-model](#shared-model)), ensuite
+on appel la méthode `.query` pour dire que c'est un SELECT. Ensuite, on précise les colonnes que l'on souhaite avec
+la méthode `.with_entities` (ne pas en mettre revient à faire un `SELECT *`).<br>
+A la toute fin, on utilise la méthode `.all()` pour dire que l'on souhaite récupérer l'ensemble des résultats. Si on
+veut le premier résultat, on aurait par exemple utilisé `.first()`, ou encore pour avoir le nombre de résultats, on
+aurait  utilisé `.count()`
+
+On retourne par la suite la query et on peux la stocker depuis l'appel tel que :
+
+```python
+comptes = get_all_comptes()
+```
+
+La valeur retourné est ici une liste de d'objets de type `Compte`, comme on à utilisé `all()` en fin de query. Un `first()` n'aurait renvoyé qu'un seul objet de type `Compte`. 
+
+L'accès à un attribut de la classe se fait (en reprenant la variable `compte` par exemple) comme suit :
+
+```python
+comptes = get_all_comptes() # on récupère la liste de tout les comptes
+print(comptes[0].nom) # on affiche le nom du premier compte de la liste
+```
+
+
+> [!NOTE]  
+> Pour plus d'infos, n'hésitez à consulter
+> la [documentation officielle](https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/)
+> ou cet article
+> de [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-use-flask-sqlalchemy-to-interact-with-databases-in-a-flask-application)
 
 ### Static :
 
@@ -226,18 +282,31 @@ Ce dossier en contient trois autres :
 
 On pourrait par exemple rajouter le dossier 'audio' pour stocker tous les fichiers audio.
 
+> [!IMPORTANT]  
+> Tout se qui se trouve dans le dossier static est accessible depuis le navigateur et permettras de linker vos css, js, images, etc
+
+
 ### View :
 
-- A faire
+Situées dans le dossier `/view`, on y stoque tout les fichiers html à rendre pour l'utilisateur.
+
+- A finir (en attendant voir les [modèles](https://flask.palletsprojects.com/en/2.3.x/templating/) et [héritages de modèles](https://flask.palletsprojects.com/en/1.1.x/patterns/templateinheritance/))
 
 ### app.py :
 
 Fichier à exécuter pour lancer l'application. Permet d'importer les différents controller ainsi que de préciser
 la configuration à utiliser.
 
+
+> [!IMPORTANT]  
+> Il est à noter qu'on utilise ici des "Blueprint". Ainsi quand on veux avoir un controlleur dedié à quelque chose de différent, on peux le rajouter dans le dossier controller et le réferencer dans app.py  
+>
+> Voir [la doc](https://flask.palletsprojects.com/en/2.2.x/blueprints/)
+
 ### config.py :
 
 Fichier utilisé pour créer différentes paramètres différentes configurations pour l'application.
+C'est notamment dans ce fichier que l'on pourras cofnigurer l'accès à la base de donnée (mariadb par défaut).
 
 ***
 
@@ -249,11 +318,12 @@ Fichier utilisé pour créer différentes paramètres différentes configuration
 
 ## Prérequis
 
+### A faire : Déploiments simplifié docker pour développement
+
 ### BDD locale <img src="https://pic.clubic.com/v1/images/1501317/raw" height="21">
 
 Pour faire tourner le projet, il est necessaire d'avoir une base de donnée locale. Pour cela, on utilisera MariadDB.
-Vous pouvez aussi utiliser XAMPP, mais uniquement pour faire tourner la base de donnée.
-Ainsi, il suffit seulement de lancer MySql depuis l'interface
+Vous pouvez aussi utiliser XAMPP. Vous pouvez aussi utiliser SQLite pour la portabilité. On peux paramétrer l'application dans le fichier `config.py` qui se trouve à la racine du projet.
 
 Une fois mysql démaré, on cherchera à executer en tant que root le script `db_creation.sql` en se basant sur
 [ces méthodes](https://dev.mysql.com/doc/refman/8.0/en/mysql-batch-commands.html). Ledit script permet ainsi de créer l'utilisateur nécessaire à la connexion, mais aussi de créer le
@@ -343,12 +413,8 @@ ou `http://127.0.0.1:5000/`
 
 ### Generation des classes de la base de donnée
 
-- A faire : flask-sqlcodegen
+La librairie [flask-sqlacodegen](https://pypi.org/project/flask-sqlacodegen/) permet à partir d'une connexion à une base de donnée de générer les tables au format de classe pour SQLAlchemy
 
-### TODO Flag
-
-- A faire : Explication
-- A faire : Plugin VSCode
 
 
 

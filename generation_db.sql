@@ -31,3 +31,10 @@ CREATE TABLE ParticiperA(
    FOREIGN KEY(Id_Compte) REFERENCES Compte(Id_Compte),
    FOREIGN KEY(Id_Cour) REFERENCES Cour(Id_Cour)
 );
+
+INSERT INTO Compte(nom, date_creation, hash, essaie_connexion, actif)
+VALUES('admin', '2018-01-01', 'admin', '0', '1'),
+        ('user', '2018-01-01', 'user', '0', '1'),
+        ('user2', '2018-01-01', 'user2', '0', '1'),
+        ('user3', '2018-01-01', 'user2', '0', '1');
+

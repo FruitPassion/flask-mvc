@@ -1,0 +1,14 @@
+{% extends "common/base.html" %}
+{% block body %}
+    <div class="container">
+        <h1>Page top secrette</h1>
+
+        <p>Pas grand chose à voir au final</p>
+
+        <!-- Dans ce href, on utilise la fonction url_for() qui permet de générer une url à partir du nom du controller
+        et de la méthode associée -->
+        <a href="{{ url_for('compte.index') }}">
+            <button type="button">Retour à l'accueil</button>
+        </a>
+    </div>
+{% endblock %}

@@ -4,6 +4,19 @@ db = SQLAlchemy()
 
 SCHEMA = 'db_base_flask'
 
+
+class ParticiperA(db.Model):
+    __tablename__ = 'ParticiperA'
+    # Renseigner le bon nom de table
+    __table_args__ = {'schema': SCHEMA}
+
+    Id_Cour = db.Column(db.ForeignKey(f'{SCHEMA}.Cour.Id_Cour'), primary_key=True)
+    Id_Compte = db.Column(db.ForeignKey(f'{SCHEMA}.Compte.Id_Compte'), primary_key=True)
+
+    Compte = db.relationship('Compte', primaryjoin='ParticiperA.Id_Compte == Compte.Id_Compte', backref='participer_as')
+    Cour = db.relationship('Cour', primaryjoin='ParticiperA.Id_Cour == Cour.Id_Cour', backref='participer_as')
+
+
 class Compte(db.Model):
     __tablename__ = 'Compte'
     # Renseigner le bon nom de table
@@ -16,6 +29,7 @@ class Compte(db.Model):
     essaie_connexion = db.Column(db.String(50), nullable=False)
     actif = db.Column(db.Boolean, nullable=False)
 
+
 class Photo(db.Model):
     __tablename__ = 'Photo'
     # Renseigner le bon nom de table
@@ -24,11 +38,12 @@ class Photo(db.Model):
     Id_Photo = db.Column(db.Integer, primary_key=True, autoincrement=True)
     libelle = db.Column(db.String(50))
     chemin = db.Column(db.String(100), nullable=False)
-    Id_Compte = db.Column(db.ForeignKey(f'db_fiches_dev.Compte.Id_Compte'), primary_key=True)
+    Id_Compte = db.Column(db.ForeignKey(f'{SCHEMA}.Compte.Id_Compte'), primary_key=True)
 
     Compte = db.relationship('Compte', primaryjoin='Photo.Id_Compte == Compte.Id_Compte', backref='photos')
 
-class Cour(db.model):
+
+class Cour(db.Model):
     __tablename__ = 'Cour'
     # Renseigner le bon nom de table
     __table_args__ = {'schema': SCHEMA}
@@ -36,14 +51,3 @@ class Cour(db.model):
     Id_Cour = db.Column(db.Integer, primary_key=True, autoincrement=True)
     libelle = db.Column(db.String(50), nullable=False)
     code = db.Column(db.String(5))
-
-class ParticiperA(db.model):
-    __tablename__ = 'ParticiperA'
-    # Renseigner le bon nom de table
-    __table_args__ = {'schema': SCHEMA}
-
-    Id_Cour = db.Column(db.ForeignKey(f'db_fiches_dev.Cour.Id_Cour'), primary_key=True)
-    Id_Compte = db.Column(db.ForeignKey(f'db_fiches_dev.Compte.Id_Compte'), primary_key=True)
-
-    Compte = db.relationship('Compte', primaryjoin='ParticiperA.Id_Compte == Compte.Id_Compte', backref='participer_as')
-    Cour = db.relationship('Cour', primaryjoin='ParticiperA.Id_Cour == Cour.Id_Cour', backref='participer_as')

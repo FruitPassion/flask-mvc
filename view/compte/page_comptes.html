@@ -1,0 +1,19 @@
+{% extends "common/base.html" %}
+{% block body %}
+    <div class="container">
+        <h1>Voici la liste des comptes</h1>
+
+        {% for compte in comptes %}
+            <p>Le compte de {{ compte.nom }} à été ajouté le {{ compte.date_creation }}</p>
+        {% endfor %}
+
+        <p>Il y a actuellement {{ nb_comptes }} comptes</p>
+        <p>Je répète, il y a actuellement {{ comptes|length }} comptes</p>
+
+        <!-- Dans ce href, on utilise la fonction url_for() qui permet de générer une url à partir du nom du controller
+        et de la méthode associée -->
+        <a href="{{ url_for('compte.index') }}">
+            <button type="button">Retour à l'accueil</button>
+        </a>
+    </div>
+{% endblock %}

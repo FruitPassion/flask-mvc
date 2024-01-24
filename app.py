@@ -32,6 +32,8 @@ def create_app(config=None):
 
     # Enregistrement des controller
     app.register_blueprint(compte)
+    
+    # TODO: systeme de log
 
     # Initialisation du schema de la base de données dans l'application
     db.init_app(app)
@@ -58,7 +60,6 @@ def create_app(config=None):
         return dict(url_for=dated_url_for)
 
     def dated_url_for(endpoint, **values):
-        print(endpoint, values)
         if endpoint == "static":
             filename = values.get("filename", None)
             if filename:

@@ -22,7 +22,6 @@
 - [Structure du projet](#structure-du-projet)
   - [Controller :](#controller-)
   - [Custom-Paquets :](#custom-paquets-)
-  - [shared\_model.py :](#shared_modelpy-)
   - [Model :](#model-)
   - [Static :](#static-)
   - [View :](#view-)
@@ -124,11 +123,11 @@ La route `/comptes` est tel que :
 ```python
 @compte.route("/comptes")
 def comptes():
-    tout_les_comptes = get_all_comptes()
-    return render_template("compte/page_comptes.html", comptes=tout_les_comptes, nb_comptes=get_nombre_comptes())
+    tout_les_comptes = Compte().get_all_comptes()
+    return render_template("compte/page_comptes.html", comptes=tout_les_comptes, nb_comptes=Compte().get_nombre_comptes())
 ```
 
-On à la route, la fonction associée puis on appel la fonction `get_all_comptes()` issue du [Model](#model) et on stocke sa valeur dans la variable `tout_les_comptes`. On passe ensuite cette variable à la fonction `render_template()` à laquelle on passe aussi la fonction `get_nombre_comptes` sous le nom de nb_comptes.
+On à la route, la fonction associée puis on appel la fonction `get_all_comptes()` issue du [model `Compte()`](#model) et on stocke sa valeur dans la variable `tout_les_comptes`. On passe ensuite cette variable à la fonction `render_template()` à laquelle on passe aussi la fonction `get_nombre_comptes` sous le nom de nb_comptes.
 
 > [!NOTE]  
 > `render_template()` prend en arguments obligatoire le chemin d'un fichier html ainsi que le nombre d'arguments souhaités. Il est possible de passer des variables à la vue ainsi que des fonctions. Voir [View](#view).
@@ -179,19 +178,18 @@ Ce dossier contient tous les fichiers python qui ne rentre pas dans les autres d
 
 Par exemple, `/custom_paquets/decorateur.py` contient les décorateurs qui servent de *'filtres'* aux routes, c'est à dire qui effectuent des vérifications avant d'accorder l'accès à la fonction associé à une route. Par exemple *`@login_required`* permet de vérifier si la valeur `name` est bien présente en session.
 
-### shared_model.py :
+
+### Model :
 
 Pour cet exemple, on utilisera cette structure de données simpliste :
 
 ![mcdi](https://imgur.com/w8vm5az.png)
 
-Ce fichier contient toutes les structures des tables de la base de donnée translatée en python.
-Cela permet l'utilisation de la librairie SQLAlchemy et ainsi la création des fonctions de [model](#model).
+Ce dossier comprend un fichier par table de la base de donnée. Ainsi on auras `compte.py`, `cour.py`, `photo.py`, etc. 
 
-Le fichier `model/shared_model.py` reprend les différentes tables, noms de colonnes, mais précise aussi les types,
-les indexs, si la valeur peux être nulle, la clée primaire, etc.
+Chaque fichier comprend donc une classe au nom d'une table et contient en attributs de classe les noms de colonnes, mais précise aussi les types, les indexs, si la valeur peux être nulle, la clée primaire, etc.
 
-Ici la table Compte :
+Ici la table Compte dans `/model/compte.py`:
 
 ```python
 class Compte(db.Model):
@@ -204,9 +202,11 @@ class Compte(db.Model):
     hash = db.Column(db.Text, nullable=False)
     essaie_connexion = db.Column(db.String(50), nullable=False)
     actif = db.Column(db.Boolean, nullable=False)
+
+    ...
 ```
 
-Dans ce même fichier on retrouve la table photo qui possede une clée étrangère associée à la table compte.
+On retrouve aussi la table photo ( `/model/photo.py`) qui possede une clée étrangère associée à la table compte.
 
 ```python
 class Photo(db.Model):
@@ -219,20 +219,19 @@ class Photo(db.Model):
     Id_Compte = db.Column(db.ForeignKey(f'db_base_flask.Compte.Id_Compte'), primary_key=True)
 
     Compte = db.relationship('Compte', primaryjoin='Photo.Id_Compte == Compte.Id_Compte', backref='photos')
+
+    ...
 ```
 
 > [!IMPORTANT]   
 > La derniere ligne permet de faire la jointure interne de manière automatique si aucune autre jointure n'est précisée.
 
 
-### Model :
-
-Les fichiers models sont nommés d'après la table sur laquelle ils se basent.
 Quand on se rend sur le fichier `model/compte.py` par exemple, on peut y voir la fonction `get_all_comptes()` que
 l'on a utilisé précedemment dans notre controller.
 
 ```python
-def get_all_comptes():
+def get_all_comptes(self):
     return Compte.query.with_entities(Compte.nom, Compte.date_creation).all()
 ```
 
@@ -254,7 +253,7 @@ aurait  utilisé `.count()`
 On retourne par la suite la query et on peux la stocker depuis l'appel tel que :
 
 ```python
-comptes = get_all_comptes()
+comptes = Comptes().get_all_comptes()
 ```
 
 La valeur retourné est ici une liste de d'objets de type `Compte`, comme on à utilisé `all()` en fin de query. Un `first()` n'aurait renvoyé qu'un seul objet de type `Compte`. 
@@ -262,7 +261,7 @@ La valeur retourné est ici une liste de d'objets de type `Compte`, comme on à 
 L'accès à un attribut de la classe se fait (en reprenant la variable `compte` par exemple) comme suit :
 
 ```python
-comptes = get_all_comptes() # on récupère la liste de tout les comptes
+comptes = Comptes().get_all_comptes() # on récupère la liste de tout les comptes
 print(comptes[0].nom) # on affiche le nom du premier compte de la liste
 ```
 
@@ -291,7 +290,7 @@ On pourrait par exemple rajouter le dossier 'audio' pour stocker tous les fichie
 
 Situées dans le dossier `/view`, on y stoque tout les fichiers html à rendre pour l'utilisateur.
 
-- A finir (en attendant voir les [modèles](https://flask.palletsprojects.com/en/2.3.x/templating/) et [héritages de modèles](https://flask.palletsprojects.com/en/1.1.x/patterns/templateinheritance/))
+- A finir (en attendant voir les [templates](https://flask.palletsprojects.com/en/2.3.x/templating/) et [héritages de templates](https://flask.palletsprojects.com/en/1.1.x/patterns/templateinheritance/))
 
 ### app.py :
 
@@ -357,7 +356,7 @@ Depuis ce projet, on ouvre le terminal et on tape :
 `python -m venv .env`. Au bout de quelques secondes un dossier nommé `.env` est créé à la racine du projet.
 C'est le dossier de notre environnement virtuel.
 
-Maintenant, pour activer cet environnement, il suffit de taper la commande :
+Maintenant, pour activer cet environnement, il suffit de taper la commande (voir [pour chaque OS](https://docs.python.org/3/library/venv.html)):
 
 ```shell
 $ .env\Scripts\activate

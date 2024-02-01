@@ -390,11 +390,11 @@ Si tout se passe bien, à la fin de l'execution de la commande, le projet sera e
 
 ### Lancement du projet
 
-Le lancement s'effectue grâce au fichier `app.py` que l'on lance à la racine du projet avec l'environnement virtuel
+Le lancement s'effectue grâce au fichier `app.py`, et en précisant la configuration, que l'on lance à la racine du projet avec l'environnement virtuel
 activé.
 
 ```shell
-(.env) $ python app.py
+(.env) $ python app.py dev
 ``` 
 
 On peut ensuite se rendre sur son navigateur web et acceder à l'index via `http://localhost:5000/`

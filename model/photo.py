@@ -13,5 +13,3 @@ class Photo(db.Model):
 
     Compte = db.relationship('Compte', primaryjoin='Photo.Id_Compte == Compte.Id_Compte', backref='photos')
     
-    def __init__(self):
-        return

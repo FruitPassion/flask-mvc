@@ -12,5 +12,3 @@ class ParticiperA(db.Model):
     Compte = db.relationship('Compte', primaryjoin='ParticiperA.Id_Compte == Compte.Id_Compte', backref='participer_as')
     Cour = db.relationship('Cour', primaryjoin='ParticiperA.Id_Cour == Cour.Id_Cour', backref='participer_as')
     
-    def __init__(self):
-        return

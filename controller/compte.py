@@ -28,9 +28,9 @@ def index():
 @compte.route("/comptes")
 def comptes():
     # On récupère la liste des comptes
-    tout_les_comptes = Compte().get_all_comptes()
+    tout_les_comptes = Compte.get_all_comptes()
     # On peut passer des variables à la vue
-    return render_template("compte/page_comptes.html", comptes=tout_les_comptes, nb_comptes= Compte().get_nombre_comptes())
+    return render_template("compte/page_comptes.html", comptes=tout_les_comptes, nb_comptes= Compte.get_nombre_comptes())
 
 
 @compte.route("/connexion")

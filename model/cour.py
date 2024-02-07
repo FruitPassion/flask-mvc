@@ -10,7 +10,5 @@ class Cour(db.Model):
     libelle = db.Column(db.String(50), nullable=False)
     code = db.Column(db.String(5))
     
-    def __init__(self):
-        return
 
 
